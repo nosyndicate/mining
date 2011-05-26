@@ -132,20 +132,20 @@ public class JxtaServerSocketService implements Service {
 					}
 					else if(type == Constants.MESSAGE_LEVELQUERY){
 						System.out.println("weiermo, the line is about received a query message");
-						String hostName = dis.readLine();
-						DDMService ddmservice = DDMService.getInstance();
+						String hostName = dis.readUTF();				
 						System.out.println("the host name of the node is" + hostName);
+						DDMService ddmservice = DDMService.getInstance();
 						ddmservice.addLeafNeighbor(hostName);
 						OutputStream out = (OutputStream) socket.getOutputStream();
 						DataOutput dos = new DataOutputStream(out);
 						dos.writeInt(Constants.MESSAGE_LEVELRESPONSE);
 						dos.writeInt(DDMService.getInstance().getLevel());
-						dos.writeChars(AddressUtil.getHostName());
+						dos.writeUTF(AddressUtil.getHostName());
 						
 					}else if(type == Constants.MESSAGE_LEVELRESPONSE){
 						int level = dis.readInt();
-						String hostName = dis.readLine();
-						System.out.println("weiermo, the line is "+hostName);
+						String hostName = dis.readUTF();
+						System.out.println("weiermo, the line is about received a response message, "+hostName);
 						DDMService ddmservice = DDMService.getInstance();
 						ddmservice.setLevel(level + 1);//set the level
 						ddmservice.setRootNeighbor(hostName);

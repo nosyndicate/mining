@@ -34,7 +34,7 @@ public class DDMService implements Runnable{
 	
 	private DDMService()
 	{
-		this.level = -1;
+		this.level = 0;
 		this.shouldFininsh = false;
 		leafNeighbors = new Vector();
 		rootNeighbor = null;
@@ -125,7 +125,15 @@ public class DDMService implements Runnable{
 		msg = this.pickAOnlineMessage(P2PForm.peers);		
 		
 		if(msg==null)//no other node available, set the level of this node to 0
+		{
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return;
+		}
 		
 		try{
 			socket = new JxtaSocket(P2PForm.pg,
@@ -133,11 +141,13 @@ public class DDMService implements Runnable{
 			        PipeUtil.findPipeAdv(P2PForm.pg, JxtaServerSocketService.JxtaServerSocketPipeAdvPrefix + msg.getHostName()),
 			        60000,
 			        true);
+			System.out.println("socket connected");
 			OutputStream out = (OutputStream) socket.getOutputStream();
 			DataOutput dos = new DataOutputStream(out);
 			dos.writeInt(Constants.MESSAGE_LEVELQUERY);	
-			dos.writeChars(AddressUtil.getHostName());
+			dos.writeUTF(AddressUtil.getHostName());
 			out.flush();
+			System.out.println("send query already");
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -152,7 +162,7 @@ public class DDMService implements Runnable{
 		while(size==0)
 		{
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -161,11 +171,12 @@ public class DDMService implements Runnable{
 		}
 		if(size==1)
 		{
-			if(peers.elementAt(1).getHostName().equals(AddressUtil.getHostName()))
+			if(peers.elementAt(0).getHostName().equals(AddressUtil.getHostName()))
 			{
 				return null;
 			}
 		}
+
 		int pos = (int) (size * random.nextDouble());
 		while(peers.elementAt(pos).getHostName().equals(AddressUtil.getHostName()))
 		{
