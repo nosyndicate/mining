@@ -131,8 +131,10 @@ public class JxtaServerSocketService implements Service {
 						
 					}
 					else if(type == Constants.MESSAGE_LEVELQUERY){
+						System.out.println("weiermo, the line is about received a query message");
 						String hostName = dis.readLine();
 						DDMService ddmservice = DDMService.getInstance();
+						System.out.println("the host name of the node is" + hostName);
 						ddmservice.addLeafNeighbor(hostName);
 						OutputStream out = (OutputStream) socket.getOutputStream();
 						DataOutput dos = new DataOutputStream(out);

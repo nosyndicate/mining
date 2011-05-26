@@ -48,6 +48,7 @@ public class AddressUtil {
 		catch(java.net.UnknownHostException uhe) {
 			
 		}
+		hostname = "testmachine";
 		return hostname+"[@"+AddressUtil.getIPAddress()+"]";
     }
     

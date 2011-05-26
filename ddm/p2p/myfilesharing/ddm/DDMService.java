@@ -53,7 +53,7 @@ public class DDMService implements Runnable{
 	@Override
 	public void run() {
 
-		
+		System.out.println("enter ddmservice thread");
 		this.sendLevelQuery();
 		initLocalAssosiationRule();
 		updateLocalAssosiationRule(assosiationRules);
@@ -147,14 +147,30 @@ public class DDMService implements Runnable{
 	private OnlineMessage pickAOnlineMessage(Vector<OnlineMessage> peers)
 	{
 		Random random = new Random();
-		int size = peers.size();
-		if(size==0)
-		{
-			this.setLevel(0);
-			return null;
-		}
 		
+		int size = peers.size();
+		while(size==0)
+		{
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			size = peers.size();
+		}
+		if(size==1)
+		{
+			if(peers.elementAt(1).getHostName().equals(AddressUtil.getHostName()))
+			{
+				return null;
+			}
+		}
 		int pos = (int) (size * random.nextDouble());
+		while(peers.elementAt(pos).getHostName().equals(AddressUtil.getHostName()))
+		{
+			pos = (int) (size * random.nextDouble());
+		}
 		return peers.elementAt(pos);
 	}
 	
